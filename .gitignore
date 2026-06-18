@@ -1,0 +1,82 @@
+# Dependencies
+node_modules/
+vendor/
+/frontend/node_modules/
+/backend/vendor/
+/frontend/dist/
+/frontend/.vite/
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.*.local
+!.env.example
+
+# Build outputs
+/backend/public/build/
+/backend/public/storage/
+/backend/nativephp/
+/backend/dist/
+
+# NativePHP build outputs
+/backend/nativephp/android/
+/backend/nativephp/ios/
+/backend/nativephp/electron/
+*.apk
+*.aab
+*.ipa
+*.dmg
+*.exe
+*.app
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+storage/logs/*.log
+!storage/logs/.gitkeep
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+.phpunit.result.cache
+.php-cs-fixer.cache
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Laravel
+/backend/storage/app/public/*
+!/backend/storage/app/public/.gitkeep
+/backend/storage/framework/cache/data/*
+!/backend/storage/framework/cache/data/.gitkeep
+/backend/storage/framework/sessions/*
+!/backend/storage/framework/sessions/.gitkeep
+/backend/storage/framework/views/*
+!/backend/storage/framework/views/.gitkeep
+
+# Database
+*.sqlite
+*.sqlite-journal
+/backend/storage/app/native/
+!backend/storage/app/native/.gitkeep
+
+# Tests
+/coverage/
+/test-results/
+
+# Misc
+*.bak
+*.tmp
+*.temp
+.terraform/

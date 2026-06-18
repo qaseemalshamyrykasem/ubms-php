@@ -1,0 +1,12 @@
+<?php
+
+require __DIR__.'/../vendor/autoload.php';
+
+$app = require_once __DIR__.'/bootstrap/app.php';
+
+$status = $app->handleCommand(
+    Symfony\Component\Console\Input\ArgvInput::class,
+    Symfony\Component\Console\Output\ConsoleOutput::class
+);
+
+exit($status);

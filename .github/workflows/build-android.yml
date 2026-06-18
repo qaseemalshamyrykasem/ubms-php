@@ -1,0 +1,38 @@
+name: Build NativePHP Android APK
+on:
+  push:
+    branches: [ "main", "master" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: dom, curl, libxml, mbstring, zip, pdo_sqlite
+        coverage: none
+    - name: Setup Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    - name: Install Composer Dependencies
+      run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - name: Install NPM Dependencies & Build Assets
+      run: |
+        npm install
+        npm run build -- --mode=android
+    - name: Prepare NativePHP Mobile
+      run: php artisan native:install --force
+    - name: Package Android APK
+      run: php artisan native:package android --build-type=debug
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nativephp-android-app
+        path: nativephp/android/app/build/outputs/apk/debug/app-debug.apk

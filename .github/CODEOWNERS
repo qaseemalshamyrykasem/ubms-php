@@ -1,0 +1,30 @@
+# CODEOWNERS - تحديد المالكين الافتراضيين للكود
+# تنسيق: pattern  @username
+
+# المالك الافتراضي لكل الملفات
+*                      @ubms-team
+
+# ملفات الـ backend
+/backend/              @ubms-team @backend-maintainers
+/backend/app/          @ubms-team @backend-maintainers
+/backend/database/     @ubms-team @database-maintainers
+/backend/routes/       @ubms-team @backend-maintainers
+
+# ملفات الـ frontend
+/frontend/             @ubms-team @frontend-maintainers
+/frontend/src/         @ubms-team @frontend-maintainers
+
+# تكوين NativePHP
+/backend/nativephp.config.json   @ubms-team @mobile-maintainers
+/backend/config/nativephp.php    @ubms-team @mobile-maintainers
+
+# الـ GitHub Actions
+/.github/              @ubms-team @devops-maintainers
+/.github/workflows/    @ubms-team @devops-maintainers
+
+# التوثيق
+/docs/                 @ubms-team @docs-maintainers
+/README.md             @ubms-team
+
+# الأمان
+/backend/config/security.php   @ubms-team @security-maintainers

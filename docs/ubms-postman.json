@@ -1,0 +1,224 @@
+{
+  "info": {
+    "name": "UBMS API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "University Batch Management System - REST API Collection",
+    "_postman_id": "ubms-collection-2025"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api/v1" },
+    { "key": "token", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"rep@ubms.local\",\n  \"password\": \"password\",\n  \"remember\": true\n}" }
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Ahmed\",\n  \"name_ar\": \"أحمد\",\n  \"email\": \"ahmed@test.com\",\n  \"password\": \"Password123\",\n  \"password_confirmation\": \"Password123\",\n  \"batch_id\": 1\n}" }
+          }
+        },
+        {
+          "name": "Me",
+          "request": { "method": "GET", "url": "{{base_url}}/auth/me" }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/forgot-password",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"user@example.com\"\n}" }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": { "method": "POST", "url": "{{base_url}}/auth/logout" }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Stats",
+          "request": { "method": "GET", "url": "{{base_url}}/dashboard/stats" }
+        },
+        {
+          "name": "Search",
+          "request": { "method": "GET", "url": "{{base_url}}/search?q=محاضرة" }
+        }
+      ]
+    },
+    {
+      "name": "Structure",
+      "item": [
+        { "name": "Hierarchy", "request": { "method": "GET", "url": "{{base_url}}/structure/hierarchy" } },
+        { "name": "Universities", "request": { "method": "GET", "url": "{{base_url}}/universities" } },
+        { "name": "Colleges", "request": { "method": "GET", "url": "{{base_url}}/colleges" } },
+        { "name": "Departments", "request": { "method": "GET", "url": "{{base_url}}/departments" } },
+        { "name": "Levels", "request": { "method": "GET", "url": "{{base_url}}/levels" } },
+        { "name": "Sections", "request": { "method": "GET", "url": "{{base_url}}/sections" } },
+        { "name": "Batches", "request": { "method": "GET", "url": "{{base_url}}/batches" } }
+      ]
+    },
+    {
+      "name": "Announcements",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "url": "{{base_url}}/announcements?per_page=15" } },
+        { "name": "Show", "request": { "method": "GET", "url": "{{base_url}}/announcements/1" } },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/announcements",
+            "body": { "mode": "formdata", "formdata": [
+              { "key": "title", "value": "إعلان جديد", "type": "text" },
+              { "key": "body", "value": "محتوى الإعلان", "type": "text" },
+              { "key": "type", "value": "general", "type": "text" },
+              { "key": "is_pinned", "value": "1", "type": "text" },
+              { "key": "send_telegram", "value": "1", "type": "text" }
+            ] }
+          }
+        },
+        { "name": "Pin/Unpin", "request": { "method": "POST", "url": "{{base_url}}/announcements/1/pin" } },
+        { "name": "Read Stats", "request": { "method": "GET", "url": "{{base_url}}/announcements/1/stats" } },
+        { "name": "Delete", "request": { "method": "DELETE", "url": "{{base_url}}/announcements/1" } }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "item": [
+        { "name": "Lectures", "request": { "method": "GET", "url": "{{base_url}}/attendance/lectures" } },
+        {
+          "name": "Create Lecture",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/attendance/lectures",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"course_id\": 1,\n  \"date\": \"2025-06-18\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:30\",\n  \"room\": \"305\"\n}" }
+          }
+        },
+        { "name": "Refresh QR", "request": { "method": "POST", "url": "{{base_url}}/attendance/lectures/1/refresh-qr" } },
+        { "name": "Get QR Image", "request": { "method": "GET", "url": "{{base_url}}/attendance/lectures/1/qr" } },
+        {
+          "name": "Submit Attendance",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/attendance/lectures/1/submit",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"records\": [\n    {\"student_id\": 5, \"status\": \"present\"},\n    {\"student_id\": 6, \"status\": \"absent\"}\n  ]\n}" }
+          }
+        },
+        {
+          "name": "Scan QR (Student)",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/attendance/scan",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"lecture_id\": 1,\n  \"token\": \"550e8400-e29b-41d4-a716-446655440000\"\n}" }
+          }
+        },
+        { "name": "Lock Attendance", "request": { "method": "POST", "url": "{{base_url}}/attendance/lectures/1/lock" } },
+        { "name": "My Stats", "request": { "method": "GET", "url": "{{base_url}}/attendance/my-stats" } },
+        { "name": "My History", "request": { "method": "GET", "url": "{{base_url}}/attendance/my-history" } },
+        { "name": "Batch Stats", "request": { "method": "GET", "url": "{{base_url}}/attendance/batch-stats" } }
+      ]
+    },
+    {
+      "name": "Assignments",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "url": "{{base_url}}/assignments" } },
+        { "name": "Show", "request": { "method": "GET", "url": "{{base_url}}/assignments/1" } },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/assignments",
+            "body": { "mode": "formdata", "formdata": [
+              { "key": "title", "value": "واجب 1", "type": "text" },
+              { "key": "description", "value": "وصف", "type": "text" },
+              { "key": "course_id", "value": "1", "type": "text" },
+              { "key": "deadline", "value": "2025-06-25T23:59:00", "type": "text" },
+              { "key": "max_grade", "value": "100", "type": "text" },
+              { "key": "notify_telegram", "value": "1", "type": "text" }
+            ] }
+          }
+        },
+        { "name": "Download Attachment", "request": { "method": "GET", "url": "{{base_url}}/assignments/1/attachments/1/download" } },
+        { "name": "Delete", "request": { "method": "DELETE", "url": "{{base_url}}/assignments/1" } }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "url": "{{base_url}}/courses" } },
+        { "name": "Show", "request": { "method": "GET", "url": "{{base_url}}/courses/1" } },
+        { "name": "Delete", "request": { "method": "DELETE", "url": "{{base_url}}/courses/1" } }
+      ]
+    },
+    {
+      "name": "Schedules",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "url": "{{base_url}}/schedules" } },
+        {
+          "name": "Create",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/schedules",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"course_id\": 1,\n  \"day\": \"sunday\",\n  \"start_time\": \"09:00\",\n  \"end_time\": \"10:30\",\n  \"room\": \"305\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        { "name": "List", "request": { "method": "GET", "url": "{{base_url}}/notifications" } },
+        { "name": "Unread Count", "request": { "method": "GET", "url": "{{base_url}}/notifications/unread-count" } },
+        { "name": "Mark Read", "request": { "method": "POST", "url": "{{base_url}}/notifications/1/read" } },
+        { "name": "Mark All Read", "request": { "method": "POST", "url": "{{base_url}}/notifications/read-all" } },
+        { "name": "Clear All", "request": { "method": "DELETE", "url": "{{base_url}}/notifications" } }
+      ]
+    },
+    {
+      "name": "Telegram",
+      "item": [
+        { "name": "Status", "request": { "method": "GET", "url": "{{base_url}}/telegram/status" } },
+        { "name": "Generate Code", "request": { "method": "POST", "url": "{{base_url}}/telegram/generate-code" } },
+        { "name": "Disconnect", "request": { "method": "POST", "url": "{{base_url}}/telegram/disconnect" } },
+        { "name": "Test Message", "request": { "method": "POST", "url": "{{base_url}}/telegram/test" } }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        { "name": "Attendance Excel", "request": { "method": "GET", "url": "{{base_url}}/reports/attendance/1/excel" } },
+        { "name": "Attendance PDF", "request": { "method": "GET", "url": "{{base_url}}/reports/attendance/1/pdf" } },
+        { "name": "Students Excel", "request": { "method": "GET", "url": "{{base_url}}/reports/students/1" } },
+        { "name": "Announcements Excel", "request": { "method": "GET", "url": "{{base_url}}/reports/announcements/1" } },
+        { "name": "Assignments Excel", "request": { "method": "GET", "url": "{{base_url}}/reports/assignments/1" } },
+        { "name": "Statistics Excel", "request": { "method": "GET", "url": "{{base_url}}/reports/statistics/1/excel" } },
+        { "name": "Stats JSON", "request": { "method": "GET", "url": "{{base_url}}/reports/stats/1" } }
+      ]
+    }
+  ]
+}

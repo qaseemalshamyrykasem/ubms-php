@@ -1,0 +1,42 @@
+{
+    "android": {
+        "package": "com.university.ubms",
+        "app_name": "UBMS",
+        "version": "1.0.0",
+        "version_code": 1,
+        "min_sdk_version": 24,
+        "target_sdk_version": 34,
+        "compile_sdk_version": 34,
+        "permissions": [
+            "android.permission.CAMERA",
+            "android.permission.INTERNET",
+            "android.permission.ACCESS_NETWORK_STATE",
+            "android.permission.VIBRATE",
+            "android.permission.POST_NOTIFICATIONS",
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+        ],
+        "features": [
+            {
+                "name": "android.hardware.camera",
+                "required": true
+            }
+        ],
+        "deep_link_scheme": "ubms",
+        "icon": "public/icon.png",
+        "splash": {
+            "color": "#4f46e5",
+            "icon": "public/splash-icon.png"
+        }
+    },
+    "ios": {
+        "bundle_identifier": "com.university.ubms",
+        "app_name": "UBMS",
+        "version": "1.0.0",
+        "min_ios_version": "13.0",
+        "permissions": {
+            "NSCameraUsageDescription": "نحتاج الكاميرا لمسح رموز QR لتسجيل الحضور",
+            "NSPhotoLibraryUsageDescription": "نحتاج الوصول للصور لرفع الصورة الشخصية"
+        }
+    }
+}
