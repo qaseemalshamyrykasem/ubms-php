@@ -159,8 +159,8 @@ npm run dev  # http://localhost:5173
 
 ### كيف يعمل؟
 1. عند الـ push على `main` أو `master`، يبدأ الـ workflow
-2. يثبّت PHP 8.2 + Java 17 + Android SDK
-3. يبني الأصول عبر Composer + NPM
+2. يثبّت PHP 8.3 + Java 17 + Android SDK
+3. يبني الأصول عبر Composer (داخل `backend`) + NPM (داخل `frontend`)
 4. يهيّئ NativePHP Mobile
 5. يبني APK Debug
 6. يرفع الـ APK كـ artifact قابل للتنزيل

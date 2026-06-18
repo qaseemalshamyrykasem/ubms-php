@@ -7,11 +7,11 @@
 ملف `build-android.yml` ينفّذ تلقائياً عند الـ push على فرع `main` أو `master`. يقوم بـ:
 
 1. **Checkout** الكود من المستودع
-2. **إعداد PHP 8.2** مع امتدادات: dom, curl, libxml, mbstring, zip, pdo_sqlite
+2. **إعداد PHP 8.3** مع امتدادات: dom, curl, mbstring, zip, pdo_sqlite, gd, intl, bcmath, xml
 3. **إعداد Java JDK 17** (Zulu distribution)
 4. **إعداد Android SDK**
-5. **تثبيت اعتماديات Composer** (Laravel + NativePHP)
-6. **تثبيت NPM + بناء الأصول** بـ mode=android
+5. **تثبيت اعتماديات Composer** داخل مجلد `backend` (Laravel + NativePHP)
+6. **تثبيت NPM + بناء الأصول** داخل مجلد `frontend` بـ mode=android
 7. **تهيئة NativePHP Mobile** عبر `php artisan native:install --force`
 8. **بناء APK Debug** عبر `php artisan native:package android --build-type=debug`
 9. **رفع الـ APK** كـ artifact قابل للتنزيل

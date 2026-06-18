@@ -23,8 +23,8 @@
         "barryvdh/laravel-dompdf": "^3.0",
         "spatie/laravel-permission": "^6.4",
         "livewire/livewire": "^3.5",
-        "nativephp/electron": "^0.6.0",
-        "nativephp/laravel": "^0.6.0"
+        "nativephp/electron": "^1.0",
+        "nativephp/laravel": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

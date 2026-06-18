@@ -11,8 +11,8 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
-        extensions: dom, curl, libxml, mbstring, zip, pdo_sqlite
+        php-version: '8.3'
+        extensions: dom, curl, mbstring, zip, pdo_sqlite, gd, intl, bcmath, xml
         coverage: none
     - name: Setup Java JDK
       uses: actions/setup-java@v4
@@ -23,16 +23,20 @@ jobs:
       uses: android-actions/setup-android@v3
     - name: Install Composer Dependencies
       run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      working-directory: backend
     - name: Install NPM Dependencies & Build Assets
       run: |
         npm install
         npm run build -- --mode=android
+      working-directory: frontend
     - name: Prepare NativePHP Mobile
       run: php artisan native:install --force
+      working-directory: backend
     - name: Package Android APK
       run: php artisan native:package android --build-type=debug
+      working-directory: backend
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: nativephp-android-app
-        path: nativephp/android/app/build/outputs/apk/debug/app-debug.apk
+        path: backend/nativephp/android/app/build/outputs/apk/debug/app-debug.apk
