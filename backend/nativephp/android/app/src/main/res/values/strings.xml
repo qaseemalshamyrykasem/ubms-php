@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">UBMS</string>
+    <string name="title_activity_main">UBMS</string>
+    <string name="package_name">com.university.ubms</string>
+    <string name="custom_url_scheme">ubms</string>
+    <string name="default_notification_channel_id">ubms_notifications</string>
+    <string name="default_notification_channel_name">UBMS Notifications</string>
+    <string name="default_notification_channel_description">إشعارات نظام إدارة الدفعات الجامعية</string>
+</resources>

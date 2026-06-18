@@ -1,0 +1,30 @@
+// Top-level build file for NativePHP Mobile (Android)
+// This configures Gradle for building the UBMS Android APK.
+
+buildscript {
+    ext {
+        kotlin_version = '1.9.22'
+        gradle_version = '8.7'
+    }
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.5.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

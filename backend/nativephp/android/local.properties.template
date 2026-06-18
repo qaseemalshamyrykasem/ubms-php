@@ -1,0 +1,12 @@
+# local.properties
+# This file is generated automatically by Android Studio.
+# In CI, NativePHP generates this file based on environment.
+#
+# Manual setup:
+#   1. Set sdk.dir to your Android SDK path
+#   2. Set ndk.dir to your Android NDK path (optional)
+#
+# DO NOT commit this file. It's already in .gitignore.
+
+sdk.dir=/usr/local/lib/android/sdk
+ndk.dir=/usr/local/lib/android/sdk/ndk/26.1.10909125

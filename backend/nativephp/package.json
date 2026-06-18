@@ -1,0 +1,24 @@
+{
+    "name": "ubms-native",
+    "version": "1.0.0",
+    "description": "UBMS Capacitor Android build configuration",
+    "private": true,
+    "scripts": {
+        "sync": "cap sync android",
+        "build:android": "cap build android",
+        "open:android": "cap open android"
+    },
+    "dependencies": {
+        "@capacitor/android": "^6.1.2",
+        "@capacitor/core": "^6.1.2",
+        "@capacitor/camera": "^6.0.2",
+        "@capacitor/preferences": "^6.0.2",
+        "@capacitor/haptics": "^6.0.2",
+        "@capacitor/local-notifications": "^6.0.2",
+        "@capacitor/status-bar": "^6.0.2",
+        "@capacitor/splash-screen": "^6.0.2"
+    },
+    "devDependencies": {
+        "@capacitor/cli": "^6.1.2"
+    }
+}

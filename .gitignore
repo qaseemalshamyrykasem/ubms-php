@@ -1,0 +1,68 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.production
+.env.*.local
+!.env.example
+
+# Backend - Laravel
+backend/vendor/
+backend/node_modules/
+backend/storage/app/public/*
+!backend/storage/app/public/.gitkeep
+backend/storage/logs/*
+!backend/storage/logs/.gitkeep
+backend/storage/framework/cache/data/*
+!backend/storage/framework/cache/data/.gitkeep
+backend/storage/framework/sessions/*
+!backend/storage/framework/sessions/.gitkeep
+backend/storage/framework/views/*
+!backend/storage/framework/views/.gitkeep
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# NativePHP Mobile - Build artifacts (keep source files, ignore build outputs)
+backend/nativephp/android/.gradle/
+backend/nativephp/android/build/
+backend/nativephp/android/app/build/
+backend/nativephp/android/app/release/
+backend/nativephp/android/captures/
+backend/nativephp/android/local.properties
+backend/nativephp/android/.cxx/
+backend/nativephp/android/app/.cxx/
+backend/nativephp/node_modules/
+backend/nativephp/dist/
+
+# NativePHP Mobile - Generated binaries (don't commit, build in CI)
+*.apk
+*.aab
+*.ipa
+*.dmg
+*.exe
+*.app
+*.keystore
+!backend/nativephp/android/app/debug.keystore
+*.jks
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Misc
+*.bak
+*.tmp
+.cache/

@@ -1,0 +1,66 @@
+{
+    "$schema": "https://capacitorjs.com/docs/config",
+    "version": "1.0",
+    "app": {
+        "id": "com.university.ubms",
+        "name": "UBMS",
+        "version": "1.0.0",
+        "versionCode": 1,
+        "author": "UBMS Team",
+        "description": "University Batch Management System"
+    },
+    "android": {
+        "package": "com.university.ubms",
+        "appName": "UBMS",
+        "versionCode": 1,
+        "versionName": "1.0.0",
+        "minSdkVersion": 24,
+        "targetSdkVersion": 34,
+        "compileSdkVersion": 34,
+        "buildToolsVersion": "34.0.0",
+        "permissions": [
+            "android.permission.CAMERA",
+            "android.permission.INTERNET",
+            "android.permission.ACCESS_NETWORK_STATE",
+            "android.permission.VIBRATE",
+            "android.permission.POST_NOTIFICATIONS",
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+        ],
+        "features": [
+            { "name": "android.hardware.camera", "required": false },
+            { "name": "android.hardware.touchscreen", "required": true }
+        ],
+        "deepLink": {
+            "scheme": "ubms",
+            "host": "app"
+        },
+        "arch": ["arm64-v8a", "armeabi-v7a", "x86_64"]
+    },
+    "capacitor": {
+        "webDir": "public",
+        "server": {
+            "androidScheme": "https",
+            "hostname": "app.ubms.local",
+            "port": 8000
+        },
+        "plugins": {
+            "SplashScreen": {
+                "launchShowDuration": 1500,
+                "backgroundColor": "#4F46E5",
+                "showSpinner": false
+            },
+            "StatusBar": {
+                "style": "DARK",
+                "backgroundColor": "#4F46E5"
+            },
+            "Camera": { "permissions": ["camera"] },
+            "LocalNotifications": {
+                "smallIcon": "ic_stat_icon",
+                "iconColor": "#4F46E5"
+            },
+            "Haptics": {},
+            "Preferences": {}
+        }
+    }
+}
