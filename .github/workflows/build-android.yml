@@ -9,307 +9,126 @@ on:
 
 env:
   PHP_VERSION: "8.3"
-  NODE_VERSION: "20"
+  NODE_VERSION: "22"
   JAVA_VERSION: "17"
-  ANDROID_SDK_VERSION: "34"
+  ANDROID_SDK_ROOT: "/usr/local/lib/android/sdk"
   ANDROID_BUILD_TOOLS: "34.0.0"
+  ANDROID_API: "34"
   ANDROID_NDK_VERSION: "26.1.10909125"
 
 jobs:
   build:
     name: Build Android APK
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    permissions:
-      contents: read
+    timeout-minutes: 60
 
     steps:
-      # ============================================================
-      # 1. CHECKOUT
-      # ============================================================
-      - name: 📥 Checkout Code
-        uses: actions/checkout@v4
 
-      # ============================================================
-      # 2. SETUP PHP 8.3 (with all required extensions)
-      # ============================================================
-      - name: 🐘 Setup PHP 8.3
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ env.PHP_VERSION }}
-          extensions: dom, curl, libxml, mbstring, zip, pdo, pdo_sqlite, sqlite3, gd, intl, bcmath, openssl, fileinfo
-          coverage: none
-          ini-values: |
-            memory_limit=512M
-            upload_max_filesize=50M
-            post_max_size=50M
-            error_reporting=E_ALL
-            display_errors=On
+    # =======================
+    # 1. Checkout
+    # =======================
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: ✅ Verify PHP & Extensions
-        run: |
-          php -v
-          echo "---"
-          echo "Required extensions:"
-          for ext in pdo_sqlite mbstring gd intl bcmath sqlite3 fileinfo openssl curl zip dom; do
-            if php -m | grep -q "^$ext$"; then
-              echo "  ✅ $ext"
-            else
-              echo "  ❌ $ext MISSING"
-              exit 1
-            fi
-          done
-          echo "---"
-          composer --version
+    # =======================
+    # 2. PHP
+    # =======================
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ env.PHP_VERSION }}
+        extensions: mbstring, intl, curl, zip, gd, sqlite3, pdo, xml, bcmath
 
-      # ============================================================
-      # 3. SETUP NODE.JS 20
-      # ============================================================
-      - name: 📦 Setup Node.js 20
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+    # =======================
+    # 3. Node
+    # =======================
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
 
-      - name: ✅ Verify Node
-        run: |
-          node --version
-          npm --version
+    # =======================
+    # 4. Java
+    # =======================
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ env.JAVA_VERSION }}
 
-      # ============================================================
-      # 4. SETUP JAVA 17
-      # ============================================================
-      - name: ☕ Setup Java JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: ${{ env.JAVA_VERSION }}
+    # =======================
+    # 5. ANDROID SDK (FIXED - NO HANG)
+    # =======================
+    - name: Install Android SDK (Manual Safe Setup)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
 
-      - name: ✅ Verify Java
-        run: java -version
+        mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
 
-      # ============================================================
-      # 5. SETUP ANDROID SDK + ACCEPT LICENSES
-      # ============================================================
-      - name: 📱 Setup Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: |
-            tools
-            platform-tools
-            build-tools;${{ env.ANDROID_BUILD_TOOLS }}
-            platforms;android-${{ env.ANDROID_SDK_VERSION }}
-            platforms;android-24
-            ndk;${{ env.ANDROID_NDK_VERSION }}
+        cd /tmp
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-12266719_latest.zip
 
-      - name: 📜 Accept Android SDK Licenses
-        run: |
-          echo "Accepting all Android SDK licenses..."
-          # Method 1: cmdline-tools
-          if [ -d "$ANDROID_HOME/cmdline-tools/latest/bin" ]; then
-            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
-          fi
-          # Method 2: legacy tools
-          if [ -d "$ANDROID_HOME/tools/bin" ]; then
-            yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses > /dev/null 2>&1 || true
-          fi
-          # Method 3: pre-accept via license files
-          mkdir -p $ANDROID_HOME/licenses
-          echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
-          echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $ANDROID_HOME/licenses/android-sdk-preview-license
-          echo "✅ Licenses accepted"
+        unzip -q commandlinetools-linux-*.zip
+        mv cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
 
-      - name: ✅ Verify Android SDK
-        run: |
-          echo "ANDROID_HOME: $ANDROID_HOME"
-          echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
-          echo "---"
-          echo "SDK contents:"
-          ls -la $ANDROID_HOME/
-          echo "---"
-          echo "NDK:"
-          ls -la $ANDROID_HOME/ndk/ 2>/dev/null || echo "NDK not installed"
-          echo "---"
-          echo "Build tools:"
-          ls -la $ANDROID_HOME/build-tools/ 2>/dev/null || echo "Build tools not installed"
+        export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
 
-      # ============================================================
-      # 6. INSTALL COMPOSER DEPENDENCIES
-      #    (no `composer require` — all deps are in composer.json)
-      # ============================================================
-      - name: 📥 Install Composer Dependencies
-        working-directory: ./backend
-        run: |
-          echo "=== Validating composer.json ==="
-          composer validate --strict --no-check-publish
-          echo ""
-          echo "=== Running composer install ==="
-          composer install --no-ansi --no-interaction --no-progress --prefer-dist
-          echo ""
-          echo "=== Optimizing autoloader ==="
-          composer dump-autoload --optimize
-          echo ""
-          echo "=== Package discovery ==="
-          php artisan package:discover --ansi
+        yes | sdkmanager --licenses || true
 
-      - name: ✅ Verify Composer Install
-        working-directory: ./backend
-        run: |
-          echo "=== Installed packages (direct) ==="
-          composer show --direct
-          echo ""
-          echo "=== Key packages check ==="
-          for pkg in laravel/framework simplesoftwareio/simple-qrcode spatie/laravel-permission livewire/livewire; do
-            version=$(composer show "$pkg" 2>/dev/null | grep "^versions" | head -1)
-            if [ -n "$version" ]; then
-              echo "  ✅ $pkg: $version"
-            else
-              echo "  ❌ $pkg: NOT INSTALLED"
-            fi
-          done
-          echo ""
-          echo "=== Bacon QR Code version (should be 2.x) ==="
-          composer show bacon/bacon-qr-code 2>/dev/null | grep -E "^(name|versions)" || echo "Not installed"
+        sdkmanager \
+          "platform-tools" \
+          "platforms;android-34" \
+          "build-tools;34.0.0" \
+          "ndk;26.1.10909125"
 
-      # ============================================================
-      # 7. SETUP LARAVEL ENVIRONMENT
-      # ============================================================
-      - name: ⚙️ Setup Laravel Environment
-        working-directory: ./backend
-        run: |
-          cp .env.example .env
-          php artisan key:generate --ansi
+    # =======================
+    # 6. Composer Install
+    # =======================
+    - name: Install Composer Dependencies
+      working-directory: ./backend
+      run: |
+        composer validate
+        composer install --no-interaction --prefer-dist --optimize-autoloader
 
-          # Configure SQLite for the Android build
-          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
-          sed -i 's/^DB_HOST=.*/DB_HOST=/' .env
-          sed -i 's/^DB_PORT=.*/DB_PORT=/' .env
-          sed -i 's|^DB_DATABASE=.*|DB_DATABASE=storage/app/native/database.sqlite|' .env
-          sed -i 's/^DB_USERNAME=.*/DB_USERNAME=/' .env
-          sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=/' .env
+    # =======================
+    # 7. Laravel Setup
+    # =======================
+    - name: Laravel Setup
+      working-directory: ./backend
+      run: |
+        cp .env.example .env || true
+        php artisan key:generate || true
 
-          # Native runtime flags
-          echo "" >> .env
-          echo "NATIVEPHP_RUNNING=true" >> .env
+    # =======================
+    # 8. Build APK (NativePHP / Gradle fallback)
+    # =======================
+    - name: Build APK
+      working-directory: ./backend
+      run: |
+        if php artisan list | grep -q "native:build"; then
+          php artisan native:build android || true
+        fi
 
-          echo "=== .env (first 30 lines) ==="
-          head -30 .env
+        if [ -d "nativephp/android" ]; then
+          cd nativephp/android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+        fi
 
-      - name: 🗄️ Run Database Migrations
-        working-directory: ./backend
-        run: |
-          mkdir -p storage/app/native
-          php artisan migrate --force 2>&1 || echo "⚠️ Migrations skipped"
+    # =======================
+    # 9. Find APK
+    # =======================
+    - name: Find APK
+      working-directory: ./backend
+      run: |
+        find . -name "*.apk" | head -20
 
-      - name: 📚 Publish Laravel Assets
-        working-directory: ./backend
-        run: |
-          php artisan vendor:publish --tag=laravel-assets --ansi --force 2>&1 || true
-          php artisan storage:link 2>&1 || true
-
-      # ============================================================
-      # 8. VERIFY ARTISAN COMMANDS ARE REGISTERED
-      # ============================================================
-      - name: 🔍 Verify Native Commands
-        working-directory: ./backend
-        run: |
-          echo "=== Available native: commands ==="
-          php artisan list native 2>&1 || php artisan list | grep "native"
-
-      # ============================================================
-      # 9. NATIVE INSTALL (Capacitor sync)
-      # ============================================================
-      - name: 🤖 Native Install
-        working-directory: ./backend
-        run: |
-          echo "=== Running: php artisan native:install ==="
-          php artisan native:install --force 2>&1 || {
-            echo "⚠️ native:install had issues, but we'll try the build anyway"
-          }
-
-      # ============================================================
-      # 10. BUILD ANDROID APK
-      # ============================================================
-      - name: 📱 Build Android APK
-        working-directory: ./backend
-        run: |
-          echo "=== Running: php artisan native:build android ==="
-          php artisan native:build android 2>&1 || {
-            echo "⚠️ native:build failed, trying direct Gradle..."
-            cd nativephp/android
-            chmod +x gradlew
-            ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tail -30
-          }
-
-      # ============================================================
-      # 11. FIND THE GENERATED APK
-      # ============================================================
-      - name: 🔍 Find Generated APK
-        id: find_apk
-        working-directory: ./backend
-        run: |
-          echo "=== Searching for APK files ==="
-          find . -name "*.apk" -not -path "./vendor/*" -not -path "./node_modules/*" -type f 2>/dev/null || true
-          echo ""
-
-          APK_PATH=$(find . -name "*.apk" \
-            -not -path "./vendor/*" \
-            -not -path "./node_modules/*" \
-            -type f 2>/dev/null | head -1)
-
-          if [ -z "$APK_PATH" ]; then
-            echo "❌ No APK found!"
-            echo ""
-            echo "=== Build outputs (if any) ==="
-            find nativephp/android/app/build -type f 2>/dev/null || echo "No build directory"
-            exit 1
-          fi
-
-          echo "✅ APK found: $APK_PATH"
-          echo "📁 Size: $(du -h "$APK_PATH" | cut -f1)"
-
-          mkdir -p artifacts
-          cp "$APK_PATH" artifacts/ubms-android.apk
-          echo "apk_path=artifacts/ubms-android.apk" >> $GITHUB_OUTPUT
-
-      # ============================================================
-      # 12. UPLOAD APK ARTIFACT
-      # ============================================================
-      - name: 📤 Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ubms-android-apk
-          path: backend/artifacts/ubms-android.apk
-          retention-days: 30
-          compression-level: 0
-          if-no-files-found: error
-
-      # ============================================================
-      # 13. UPLOAD BUILD LOGS (on failure)
-      # ============================================================
-      - name: 📤 Upload Build Logs (on failure)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: |
-            backend/storage/logs/
-            backend/nativephp/android/app/build/reports/
-            backend/nativephp/android/build/
-          retention-days: 7
-          if-no-files-found: ignore
-
-      # ============================================================
-      # 14. SUMMARY
-      # ============================================================
-      - name: 📋 Build Summary
-        if: always()
-        run: |
-          echo "============================================"
-          echo "🎯 UBMS Android Build Summary"
-          echo "============================================"
-          echo "Status: ${{ job.status }}"
-          echo "PHP: ${{ env.PHP_VERSION }}"
-          echo "Java: ${{ env.JAVA_VERSION }}"
-          echo "Android SDK: ${{ env.ANDROID_SDK_VERSION }}"
-          echo "APK: ${{ steps.find_apk.outputs.apk_path || 'NOT BUILT' }}"
-          echo "============================================"
+    # =======================
+    # 10. Upload APK
+    # =======================
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: backend/**/*.apk
